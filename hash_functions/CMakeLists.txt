@@ -7,6 +7,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    if (NOT MSVC)
+        add_compile_options(-O0)
+    endif()
+endif()
+
 if (NOT MSVC)
     add_compile_options(-Wall)
     add_compile_options(-Wextra)

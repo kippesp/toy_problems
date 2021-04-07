@@ -33,10 +33,22 @@ Fnv128_t fnv_128a_buf(const void* buf, size_t len, const Fnv128_t& hval)
     val[0] ^= (uint64_t)*bp++;
 
     /* multiply by the lowest order digit base 2^16 */
+#if 1
     tmp[0] = val[0] * FNV_128_PRIME_LOW;
     tmp[1] = val[1] * FNV_128_PRIME_LOW;
     tmp[2] = val[2] * FNV_128_PRIME_LOW;
     tmp[3] = val[3] * FNV_128_PRIME_LOW;
+#else
+    /* this is not faster (Haswell, -O3) */
+    tmp[0] = val[0] + (val[0] << 1) + (val[0] << 3) + (val[0] << 4) +
+             (val[0] << 5) + (val[0] << 8);
+    tmp[1] = val[1] + (val[1] << 1) + (val[1] << 3) + (val[1] << 4) +
+             (val[1] << 5) + (val[1] << 8);
+    tmp[2] = val[2] + (val[2] << 1) + (val[2] << 3) + (val[2] << 4) +
+             (val[2] << 5) + (val[2] << 8);
+    tmp[3] = val[3] + (val[3] << 1) + (val[3] << 3) + (val[3] << 4) +
+             (val[3] << 5) + (val[3] << 8);
+#endif
 
     /* multiply by the other non-zero digit */
     tmp[2] += val[0] << FNV_128_PRIME_SHIFT; /* tmp[2] += val[0] * 0x1000000 */
