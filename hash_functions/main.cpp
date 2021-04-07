@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
   HashAlgorithm hash = HashAlgorithm::FNV32;
   optional<DataSource> source;
   string source_str;
+  bool profile = false;
 
   for (int i = 1, num_algos = 0; i < argc; i++)
   {
@@ -34,14 +35,17 @@ int main(int argc, char* argv[])
         {
           cout << "hashtest\n\n";
           cout << "Examples:\n";
-          cout << "\thashtest [--fnv32|--fnv64|--fnv128] ";
+          cout << "\thashtest [-p] [--fnv32|--fnv64|--fnv128] ";
           cout << "[-f FILE|-s STRING|FILE]\n";
           cout << "\thashtest -h";
           cout << endl;
           exit(2);
         }
-
-        if (arg == "-fnv32")
+        else if (arg == "p")
+        {
+          profile = true;
+        }
+        else if (arg == "-fnv32")
         {
           hash = HashAlgorithm::FNV32;
           num_algos++;
@@ -157,6 +161,8 @@ int main(int argc, char* argv[])
     source = DataSource::STRING;
   }
 
+  auto start = chrono::high_resolution_clock::now();
+
   stringstream results;
 
   switch (hash)
@@ -188,7 +194,16 @@ int main(int argc, char* argv[])
     break;
   }
 
+  auto elapsed = chrono::high_resolution_clock::now() - start;
+  long long microseconds = chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+
   cout << results.str();
+
+  if (profile)
+  {
+    cout << microseconds << " us" << endl;
+    cout << source_str.length() << " bytes" << endl;
+  }
 
   // const char* b = "1234567890abcdefg";
   // val: b6e2fe55b55a0d1f90bbc6ab04080924
