@@ -62,6 +62,7 @@ if (NOT MSVC)
 endif()
 
 add_subdirectory(fnv)
+add_subdirectory(sip)
 
 add_executable(${PROJECT_NAME}test main.cpp)
-target_link_libraries(${PROJECT_NAME}test fnv)
+target_link_libraries(${PROJECT_NAME}test fnv sip)

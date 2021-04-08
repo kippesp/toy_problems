@@ -8,10 +8,21 @@
 #include <string>
 
 #include "fnv/fnv1a.h"
+#include "sip/sip.h"
 
 using namespace std;
 
-enum class HashAlgorithm { FNV32, FNV64, FNV128 };
+enum class HashAlgorithm {
+  FNV32,
+  FNV64,
+  FNV128,
+  SIP32,
+  SIP64,
+  SIP128,
+  SIP32H,
+  SIP64H,
+  SIP128H
+};
 enum class DataSource { FILE, STRING, STDIN };
 
 int main(int argc, char* argv[])
@@ -35,7 +46,14 @@ int main(int argc, char* argv[])
         {
           cout << "hashtest\n\n";
           cout << "Examples:\n";
-          cout << "\thashtest [-p] [--fnv32|--fnv64|--fnv128] ";
+          cout << "\thashtest [-p] [";
+          cout << "--fnv32";
+          cout << "|--fnv64";
+          cout << "|--fnv128";
+          cout << "|--sip32{h}";
+          cout << "|--sip64{h}";
+          cout << "|--sip128{h}";
+          cout << "] ";
           cout << "[-f FILE|-s STRING|FILE]\n";
           cout << "\thashtest -h";
           cout << endl;
@@ -58,6 +76,36 @@ int main(int argc, char* argv[])
         else if (arg == "-fnv128")
         {
           hash = HashAlgorithm::FNV128;
+          num_algos++;
+        }
+        else if (arg == "-sip32")
+        {
+          hash = HashAlgorithm::SIP32;
+          num_algos++;
+        }
+        else if (arg == "-sip64")
+        {
+          hash = HashAlgorithm::SIP64;
+          num_algos++;
+        }
+        else if (arg == "-sip128")
+        {
+          hash = HashAlgorithm::SIP128;
+          num_algos++;
+        }
+        else if (arg == "-sip32h")
+        {
+          hash = HashAlgorithm::SIP32H;
+          num_algos++;
+        }
+        else if (arg == "-sip64h")
+        {
+          hash = HashAlgorithm::SIP64H;
+          num_algos++;
+        }
+        else if (arg == "-sip128h")
+        {
+          hash = HashAlgorithm::SIP128H;
           num_algos++;
         }
         else if (arg == "s")
@@ -192,6 +240,56 @@ int main(int argc, char* argv[])
       results << endl;
     }
     break;
+    case HashAlgorithm::SIP32: {
+      auto val = Hash::Sip::hash32(source_str.data(), source_str.length());
+      results << "sip-32: ";
+      results << "0x";
+      results << setfill('0') << setw(8) << hex << val;
+      results << endl;
+    }
+    break;
+    case HashAlgorithm::SIP64: {
+      auto val = Hash::Sip::hash64(source_str.data(), source_str.length());
+      results << "sip-64: ";
+      results << "0x";
+      results << setfill('0') << setw(16) << hex << val;
+      results << endl;
+    }
+    break;
+    case HashAlgorithm::SIP128: {
+      auto val = Hash::Sip::hash128(source_str.data(), source_str.length());
+      results << "sip-128: ";
+      results << "0x";
+      results << setfill('0') << setw(16) << hex << val.w64[1];
+      results << setfill('0') << setw(16) << hex << val.w64[0];
+      results << endl;
+    }
+    break;
+    case HashAlgorithm::SIP32H: {
+      auto val = Hash::Sip::hash32h(source_str.data(), source_str.length());
+      results << "sip-32H: ";
+      results << "0x";
+      results << setfill('0') << setw(8) << hex << val;
+      results << endl;
+    }
+    break;
+    case HashAlgorithm::SIP64H: {
+      auto val = Hash::Sip::hash64h(source_str.data(), source_str.length());
+      results << "sip-64H: ";
+      results << "0x";
+      results << setfill('0') << setw(16) << hex << val;
+      results << endl;
+    }
+    break;
+    case HashAlgorithm::SIP128H: {
+      auto val = Hash::Sip::hash128h(source_str.data(), source_str.length());
+      results << "sip-128H: ";
+      results << "0x";
+      results << setfill('0') << setw(16) << hex << val.w64[1];
+      results << setfill('0') << setw(16) << hex << val.w64[0];
+      results << endl;
+    }
+    break;
   }
 
   auto elapsed = chrono::high_resolution_clock::now() - start;
@@ -216,6 +314,8 @@ int main(int argc, char* argv[])
   //
   // const char* b = "abcdefghijklmnopqrstuvwxyz1234567890";
   // val: 9c3de1c5da11148ef7c569160e6d4eeb
+
+  // Hash::Sip::hash128();
 
   return 0;
 }
