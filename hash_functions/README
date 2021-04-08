@@ -1,0 +1,46 @@
+March 2021
+
+  A podcast I listen to extolled the virtues of FNV being not all that bad and
+  simple to implement for multiple output widths.  So I wanted to look into it.
+  At the same time, I came across Python 3 ditching FNV and going with SIP.  So
+  I looked at that too.
+
+Reference implementations of fnv1a (32/64) and sip hashes in order to evaluate
+their relative speed and subjective quality.  FNV1A-128 is an extension of the
+64-bit reference implementation to output 128 bits.
+
+FNV
+---
+
+$ ./hashtest -p --fnv128 -s xxx
+fnv-128: 0xa68d8af56c8b5822836dbc798864a9ff
+19 us
+3 bytes
+
+$ ./hashtest -p --fnv128 -s xxy
+fnv-128: 0xa68d8af56b8b5822836dbc798864a8c4
+19 us
+3 bytes
+
+$ ./hashtest -p --fnv128 -s xxz
+fnv-128: 0xa68d8af56e8b5822836dbc798864ac75
+19 us
+3 bytes
+
+SIP
+---
+
+$ ./hashtest -p --sip128 -s xxx
+sip-128: 0x6043020ab489daebdc26ac13dd4c4aca
+20 us
+3 bytes
+
+$ ./hashtest -p --sip128 -s xxy
+sip-128: 0xd944b5dfc1db45ae74750cca30b99776
+21 us
+3 bytes
+
+$ ./hashtest -p --sip128 -s xxz
+sip-128: 0x3a105075e6ab3def39755c4fda24626e
+20 us
+3 bytes

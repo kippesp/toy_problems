@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdint>
 
 namespace Hash::Sip {
 
